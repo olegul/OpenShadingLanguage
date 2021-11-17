@@ -22,7 +22,7 @@ ifeq (${SP_OS}, rhel7)
     ifeq (${SPI_COMPILER_PLATFORM},gcc-6.3)
         CMAKE_CXX_STANDARD ?= 14
     endif
-    LLVM_VERSION ?= 12.0.0
+    LLVM_VERSION ?= 12.0.1
 else ifeq (${platform}, macosx)
     # Generic OSX machines (including LG's laptop)
     COMPILER ?= clang
@@ -60,7 +60,7 @@ ifeq (${SP_OS}, rhel7)
     #
     # A variety of tags can be used to try specific versions of gcc or
     # clang from the site-specific places we have installed them.
-    LLVM_DIRECTORY ?= /shots/spi/home/lib/arnold/rhel7/llvm_12.0.0
+   # LLVM_DIRECTORY ?= /shots/spi/home/lib/arnold/rhel7/llvm_12.0.0
     LLVM_DIRECTORY ?= /shots/spi/home/software/packages/llvm/${LLVM_VERSION}/${SPI_COMPILER_PLATFORM}
     ifeq (${COMPILER},clang9)
         LLVM_DIRECTORY := /shots/spi/home/software/packages/llvm/9.0.1-1/${SPI_COMPILER_PLATFORM}

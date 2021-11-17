@@ -321,6 +321,16 @@ public:
 
     virtual bool get_texture_info (ustring filename,
                                    TextureHandle *texture_handle,
+                                   TexturePerthread *texture_thread_info,
+                                   ShadingContext *shading_context,
+                                   int subimage,
+                                   ustring dataname, TypeDesc datatype,
+                                   int index,
+                                   void *data,
+                                   ustring *errormessage);
+
+    virtual bool get_texture_info (ustring filename,
+                                   TextureHandle *texture_handle,
                                    float s, float t,
                                    TexturePerthread *texture_thread_info,
                                    ShadingContext *shading_context,

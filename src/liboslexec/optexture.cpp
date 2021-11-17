@@ -403,6 +403,29 @@ osl_get_textureinfo (void *sg_, const char *name, void *handle,
                                            errormessage);
 }
 
+OSL_SHADEOP int
+osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
+                     void *dataname,  int type,
+                     int arraylen, int aggregate, int index, void *data,
+                     ustring *errormessage)
+{
+    // recreate TypeDesc
+    TypeDesc typedesc;
+    typedesc.basetype  = type;
+    typedesc.arraylen  = arraylen;
+    typedesc.aggregate = aggregate;
+
+    ShaderGlobals *sg   = (ShaderGlobals *)sg_;
+
+    return sg->renderer->get_texture_info (USTR(name),
+                                           (RendererServices::TextureHandle *)handle,
+                                           sg->context->texture_thread_info(),
+                                           sg->context,
+                                           0 /*FIXME-ptex*/,
+                                           USTR(dataname), typedesc, index, data,
+                                           errormessage);
+}
+
 
 
 OSL_SHADEOP int
