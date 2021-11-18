@@ -3024,16 +3024,21 @@ LLVMGEN (llvm_gen_gettextureinfo)
     bool use_index =  (op.nargs() == 5);
     Symbol& Result   = *rop.opargsym (op, 0);
     Symbol& Filename = *rop.opargsym (op, 1);
+
+    // The optional arguments are pointers here so we can use their status (null
+    // or not) to determine which variations we are
+
     Symbol* S        = use_coords ? rop.opargsym(op, 2) : nullptr;
     Symbol* T        = use_coords ? rop.opargsym(op, 3) : nullptr;
-    Symbol* Index    = use_index ? rop.opargsym (op, 2) : nullptr;
-    Symbol& Dataname = *rop.opargsym (op, use_coords ? 4 : 2 + use_index);
+    Symbol& Dataname = *rop.opargsym (op, use_coords ? 4 : 2);
+    Symbol* Index    = use_index ? rop.opargsym (op, 3) : nullptr;
     Symbol& Data     = *rop.opargsym (op, use_coords ? 5 : 3 + use_index);
 
     OSL_DASSERT(!Result.typespec().is_closure_based() &&
              Filename.typespec().is_string() &&
              (S == nullptr || S->typespec().is_float()) &&
              (T == nullptr || T->typespec().is_float()) &&
+             (Index == nullptr || Index->typespec().is_int()) &&
              Dataname.typespec().is_string() &&
              !Data.typespec().is_closure_based() &&
              Result.typespec().is_int());
@@ -3051,11 +3056,15 @@ LLVMGEN (llvm_gen_gettextureinfo)
     if (use_coords) {
         args.push_back(rop.llvm_load_value(*S));
         args.push_back(rop.llvm_load_value(*T));
-    }else if (use_index){
-        args.push_back(rop.llvm_load_value(*Index));
     }
 
     args.push_back(rop.llvm_load_value(Dataname));
+
+    if (use_index){
+        std::cout << "llvm_op using index\n";
+        args.push_back(rop.llvm_load_value(*Index));
+        std::cout << "Symbol Index Value "  << *((int *)(Index->data()))<< "\n";
+    }
     // this passes a TypeDesc to an LLVM op-code
     args.push_back(rop.ll.constant((int) Data.typespec().simpletype().basetype));
     args.push_back(rop.ll.constant((int) Data.typespec().simpletype().arraylen));

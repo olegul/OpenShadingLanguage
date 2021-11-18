@@ -407,8 +407,8 @@ osl_get_textureinfo (void *sg_, const char *name, void *handle,
 
 OSL_SHADEOP int
 osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
-                     void *dataname,  int type,
-                     int arraylen, int aggregate, int index, void *data,
+                     void *dataname,  int index, int type,
+                     int arraylen, int aggregate, void *data,
                      ustring *errormessage)
 {
     // recreate TypeDesc
@@ -419,7 +419,7 @@ osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
 
     ShaderGlobals *sg   = (ShaderGlobals *)sg_;
 
-    std::cout << "osl_get_textureinfo_index";
+    std::cout << "osl_get_textureinfo_index " << index << "\n";
 
     return sg->renderer->get_texture_info (USTR(name),
                                            (RendererServices::TextureHandle *)handle,
