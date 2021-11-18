@@ -2647,6 +2647,7 @@ llvm_gen_trace_options (BackendLLVM &rop, int opnum,
 
 LLVMGEN (llvm_gen_trace)
 {
+    std::cout << "llvm_gen_trace\n";
     Opcode &op (rop.inst()->ops()[opnum]);
     Symbol &Result = *rop.opargsym (op, 0);
     Symbol &Pos = *rop.opargsym (op, 1);
@@ -2943,6 +2944,7 @@ LLVMGEN (llvm_gen_noise)
 
 LLVMGEN (llvm_gen_getattribute)
 {
+    std::cout << "llvm_gen_getattribute\n";
     // getattribute() has eight "flavors":
     //   * getattribute (attribute_name, value)
     //   * getattribute (attribute_name, value[])
@@ -3012,7 +3014,10 @@ LLVMGEN (llvm_gen_getattribute)
 
 LLVMGEN (llvm_gen_gettextureinfo)
 {
+    std::cout << "llvm_gen_gettextureinfo\n";
+
     Opcode &op (rop.inst()->ops()[opnum]);
+
 
     OSL_DASSERT(op.nargs() == 4 || op.nargs() == 5 || op.nargs() == 6);
     bool use_coords = (op.nargs() == 6);

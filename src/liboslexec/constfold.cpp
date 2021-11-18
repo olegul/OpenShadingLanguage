@@ -1005,7 +1005,7 @@ DECLFOLDER(constfold_mxcompassign)
     // Look for patterns where all 16 components are assigned in
     // succession within the same block, in which case we can turn the
     // result into a constant!
-    int index_assigned[4][4] = { {-1, -1, -1, -1}, {-1, -1, -1, -1}, 
+    int index_assigned[4][4] = { {-1, -1, -1, -1}, {-1, -1, -1, -1},
                                  {-1, -1, -1, -1}, {-1, -1, -1, -1} };
     float filled_values[4][4];
     int num_assigned = 0;
@@ -2320,6 +2320,8 @@ DECLFOLDER(constfold_getattribute)
 
 DECLFOLDER(constfold_gettextureinfo)
 {
+
+    return 0;
     Opcode &op (rop.inst()->ops()[opnum]);
 
     // FIXME: For now, punt on constant folding the variety of gettextureinfo
