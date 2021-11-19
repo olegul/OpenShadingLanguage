@@ -3063,7 +3063,7 @@ LLVMGEN (llvm_gen_gettextureinfo)
     if (use_index){
         std::cout << "llvm_op using index\n";
         args.push_back(rop.llvm_load_value(*Index));
-        std::cout << "Symbol Index Value "  << *((int *)(Index->data()))<< "\n";
+        //std::cout << "Symbol Index Value "  << *((int *)(Index->data()))<< "\n";
     }
     // this passes a TypeDesc to an LLVM op-code
     args.push_back(rop.ll.constant((int) Data.typespec().simpletype().basetype));

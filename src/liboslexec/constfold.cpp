@@ -2321,7 +2321,6 @@ DECLFOLDER(constfold_getattribute)
 DECLFOLDER(constfold_gettextureinfo)
 {
 
-    return 0;
     Opcode &op (rop.inst()->ops()[opnum]);
 
     // FIXME: For now, punt on constant folding the variety of gettextureinfo
@@ -2329,7 +2328,8 @@ DECLFOLDER(constfold_gettextureinfo)
     // the filename is constant and is known to not be UDIM, we can fall back
     // to the other case.
     bool use_coords = (op.nargs() == 6);
-    if (use_coords)
+    bool use_index  = (op.nargs() == 5);
+    if (use_coords || use_index)
         return 0;
 
     OSL_MAYBE_UNUSED Symbol& Result(*rop.inst()->argsymbol(op.firstarg() + 0));
