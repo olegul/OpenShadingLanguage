@@ -2647,7 +2647,7 @@ llvm_gen_trace_options (BackendLLVM &rop, int opnum,
 
 LLVMGEN (llvm_gen_trace)
 {
-    std::cout << "llvm_gen_trace\n";
+    //std::cout << "llvm_gen_trace\n";
     Opcode &op (rop.inst()->ops()[opnum]);
     Symbol &Result = *rop.opargsym (op, 0);
     Symbol &Pos = *rop.opargsym (op, 1);
@@ -2944,7 +2944,7 @@ LLVMGEN (llvm_gen_noise)
 
 LLVMGEN (llvm_gen_getattribute)
 {
-    std::cout << "llvm_gen_getattribute\n";
+    //std::cout << "llvm_gen_getattribute\n";
     // getattribute() has eight "flavors":
     //   * getattribute (attribute_name, value)
     //   * getattribute (attribute_name, value[])
@@ -3014,7 +3014,7 @@ LLVMGEN (llvm_gen_getattribute)
 
 LLVMGEN (llvm_gen_gettextureinfo)
 {
-    std::cout << "llvm_gen_gettextureinfo\n";
+    //std::cout << "llvm_gen_gettextureinfo\n";
 
     Opcode &op (rop.inst()->ops()[opnum]);
 
@@ -3061,7 +3061,7 @@ LLVMGEN (llvm_gen_gettextureinfo)
     args.push_back(rop.llvm_load_value(Dataname));
 
     if (use_index){
-        std::cout << "llvm_op using index\n";
+        //std::cout << "llvm_op using index\n";
         args.push_back(rop.llvm_load_value(*Index));
         //std::cout << "Symbol Index Value "  << *((int *)(Index->data()))<< "\n";
     }

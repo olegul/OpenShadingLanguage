@@ -224,7 +224,7 @@ RendererServices::get_texture_info (ustring filename,
                                     TypeDesc datatype,
                                     void *data, ustring *errormessage)
 {
-    std::cout << "RendererServices::get_texture_info\n";
+    //std::cout << "RendererServices::get_texture_info\n";
     if (! texture_thread_info)
         texture_thread_info = shading_context->texture_thread_info();
     if (! texture_handle)
@@ -259,7 +259,7 @@ RendererServices::get_texture_info (ustring filename,
                                     int index,
                                     void *data, ustring *errormessage)
 {
-    std::cout << "RendererServices::get_texture_info (index)\n";
+    //std::cout << "RendererServices::get_texture_info (index)\n";
     if (! texture_thread_info)
         texture_thread_info = shading_context->texture_thread_info();
     if (! texture_handle)

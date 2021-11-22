@@ -394,7 +394,7 @@ osl_get_textureinfo (void *sg_, const char *name, void *handle,
 
     ShaderGlobals *sg   = (ShaderGlobals *)sg_;
 
-    std::cout << "osl_get_textureinfo";
+    //std::cout << "osl_get_textureinfo";
 
     return sg->renderer->get_texture_info (USTR(name),
                                            (RendererServices::TextureHandle *)handle,
@@ -419,7 +419,7 @@ osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
 
     ShaderGlobals *sg   = (ShaderGlobals *)sg_;
 
-    std::cout << "osl_get_textureinfo_index " << index << "\n";
+    //std::cout << "osl_get_textureinfo_index " << index << "\n";
 
     return sg->renderer->get_texture_info (USTR(name),
                                            (RendererServices::TextureHandle *)handle,
