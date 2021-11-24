@@ -229,7 +229,7 @@ RendererServices::get_texture_info (ustring filename,
         texture_thread_info = shading_context->texture_thread_info();
     if (! texture_handle)
         texture_handle = texturesys()->get_texture_handle (filename, texture_thread_info);
-    //hack to see if we can read the index values in arrays
+
     bool status = texturesys()->get_texture_info (texture_handle, texture_thread_info, subimage,
                                                   dataname, datatype, data);
     if (!status) {
@@ -256,7 +256,7 @@ RendererServices::get_texture_info (ustring filename,
                                     ShadingContext *shading_context,
                                     int subimage, ustring dataname,
                                     TypeDesc datatype,
-                                    int index,
+                                    int& datalen,
                                     void *data, ustring *errormessage)
 {
     //std::cout << "RendererServices::get_texture_info (index)\n";
@@ -265,7 +265,7 @@ RendererServices::get_texture_info (ustring filename,
     if (! texture_handle)
         texture_handle = texturesys()->get_texture_handle (filename, texture_thread_info);
     bool status = texturesys()->get_texture_info (texture_handle, texture_thread_info, subimage,
-                                                  dataname, datatype, index, data);
+                                                  dataname, datatype, datalen, data);
     if (!status) {
         std::string err = texturesys()->geterror();
         if (err.size()) {

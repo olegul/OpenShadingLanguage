@@ -1272,10 +1272,19 @@ ASTfunction_call::typecheck_builtin_specialcase()
             argwriteonly(1);
             argwriteonly(2);
         } else if (m_name == "getattribute" || m_name == "getmessage"
-                   || m_name == "gettextureinfo" || m_name == "getmatrix"
+                    || m_name == "getmatrix"
                    || m_name == "dict_value") {
             // these all write to their last argument
             argwriteonly(nargs);
+        } else if (m_name == "gettextureinfo"){
+            std::cout << "gettexture info rw " << nargs << "\n";
+            argwriteonly(nargs);
+            // also write to the second last argument if we're looking
+            // up an array and querying the arraylength
+            if (nargs == 4){
+                std::cout << "gettexture info special rw\n";
+                argwriteonly(3);
+            }
         } else if (m_name == "pointcloud_get") {
             argwriteonly(5);
         } else if (m_name == "pointcloud_search") {
@@ -2136,7 +2145,7 @@ static const char * builtin_func_args [] = {
     "fprintf", "xss*", "!printf", NULL,
     "getattribute", "is?", "is?[]", "iss?", "iss?[]",  "isi?", "isi?[]", "issi?", "issi?[]", "!rw", NULL,  // FIXME -- further checking?
     "getmessage", "is?", "is?[]", "iss?", "iss?[]", "!rw", NULL,
-    "gettextureinfo", "iss?", "iss?[]", "isffs?", "isffs?[]", "issi?", "!rw", NULL,  // FIXME -- further checking?
+    "gettextureinfo", "iss?", "iss?[]", "isffs?", "isffs?[]", "issi?[]", "!rw", NULL,  // FIXME -- further checking?
     "hashnoise", NOISE_ARGS, NULL,
     "isconnected", "i?", NULL,
     "isconstant", "i?", NULL,

@@ -405,9 +405,11 @@ osl_get_textureinfo (void *sg_, const char *name, void *handle,
                                            errormessage);
 }
 
+//DECL (osl_get_textureinfo_index, "iXXXXiiiXXX")
+// i X X X X i i i X XX
 OSL_SHADEOP int
 osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
-                     void *dataname,  int index, int type,
+                     void *dataname,   void *datalen, int type,
                      int arraylen, int aggregate, void *data,
                      ustring *errormessage)
 {
@@ -419,14 +421,14 @@ osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
 
     ShaderGlobals *sg   = (ShaderGlobals *)sg_;
 
-    //std::cout << "osl_get_textureinfo_index " << index << "\n";
+    int &dl = *(int *)datalen;
 
     return sg->renderer->get_texture_info (USTR(name),
                                            (RendererServices::TextureHandle *)handle,
                                            sg->context->texture_thread_info(),
                                            sg->context,
                                            0 /*FIXME-ptex*/,
-                                           USTR(dataname), typedesc, index, data,
+                                           USTR(dataname), typedesc, dl, data,
                                            errormessage);
 }
 

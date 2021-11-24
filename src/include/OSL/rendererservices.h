@@ -325,7 +325,7 @@ public:
                                    ShadingContext *shading_context,
                                    int subimage,
                                    ustring dataname, TypeDesc datatype,
-                                   int index,
+                                   int& datalen,
                                    void *data,
                                    ustring *errormessage);
 
