@@ -3014,10 +3014,7 @@ LLVMGEN (llvm_gen_getattribute)
 
 LLVMGEN (llvm_gen_gettextureinfo)
 {
-    //std::cout << "llvm_gen_gettextureinfo\n";
-
     Opcode &op (rop.inst()->ops()[opnum]);
-
 
     OSL_DASSERT(op.nargs() == 4 || op.nargs() == 5 || op.nargs() == 6);
     bool use_coords = (op.nargs() == 6);
@@ -3060,14 +3057,9 @@ LLVMGEN (llvm_gen_gettextureinfo)
 
     args.push_back(rop.llvm_load_value(Dataname));
 
-    if (use_datalen){
-        //std::cout << "llvm_op using index\n";
-        //args.push_back(rop.llvm_load_value( Datalen));
-        // Try using arraylen
-        //type_int_ptr
+    if (use_datalen)
         args.push_back(rop.llvm_void_ptr(*Datalen));
-        //std::cout << "Symbol Datalen Value "  << *((int *) Datalen->data()))<< "\n";
-    }
+
     // this passes a TypeDesc to an LLVM op-code
     args.push_back(rop.ll.constant((int) Data.typespec().simpletype().basetype));
     args.push_back(rop.ll.constant((int) Data.typespec().simpletype().arraylen));

@@ -1277,14 +1277,11 @@ ASTfunction_call::typecheck_builtin_specialcase()
             // these all write to their last argument
             argwriteonly(nargs);
         } else if (m_name == "gettextureinfo"){
-            std::cout << "gettexture info rw " << nargs << "\n";
             argwriteonly(nargs);
             // also write to the second last argument if we're looking
             // up an array and querying the arraylength
-            if (nargs == 4){
-                std::cout << "gettexture info special rw\n";
+            if (nargs == 4)
                 argwriteonly(3);
-            }
         } else if (m_name == "pointcloud_get") {
             argwriteonly(5);
         } else if (m_name == "pointcloud_search") {

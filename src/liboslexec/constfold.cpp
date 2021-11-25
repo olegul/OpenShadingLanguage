@@ -2328,19 +2328,70 @@ DECLFOLDER(constfold_gettextureinfo)
     // the filename is constant and is known to not be UDIM, we can fall back
     // to the other case.
     bool use_coords = (op.nargs() == 6);
-    bool use_index  = (op.nargs() == 5);
-    if (use_coords || use_index)
+    bool use_datalen  = (op.nargs() == 5);
+
+    if (use_coords)
         return 0;
 
     OSL_MAYBE_UNUSED Symbol& Result(*rop.inst()->argsymbol(op.firstarg() + 0));
     Symbol &Filename (*rop.inst()->argsymbol(op.firstarg()+1));
     Symbol &Dataname (*rop.inst()->argsymbol(op.firstarg() + (use_coords ? 4 : 2)));
-    Symbol &Data (*rop.inst()->argsymbol(op.firstarg() + (use_coords ? 5 : 3)));
+    Symbol *Datalen  (use_datalen ? rop.inst()->argsymbol(op.firstarg()+3) : nullptr);
+    Symbol &Data (*rop.inst()->argsymbol(op.firstarg() + (use_coords ? 5 : 3 + use_datalen)));
     OSL_DASSERT (Result.typespec().is_int() &&
                  Filename.typespec().is_string() &&
                  Dataname.typespec().is_string());
 
-    if (Filename.is_constant() && Dataname.is_constant()) {
+    // datalen is an output variable, so it "has" to be const
+    if (Datalen && Filename.is_constant() && Dataname.is_constant()) {
+        ustring filename = Filename.get_string();
+        ustring dataname = Dataname.get_string();
+        TypeDesc t = Data.typespec().simpletype();
+        void *mydata = OIIO_ALLOCA(char, t.size());
+        void *mydatalen = OIIO_ALLOCA(char, Datalen->typespec().simpletype().size());
+
+        ustring errormessage;
+
+        int &dl = *(int *)mydatalen;
+        int result = rop.renderer()->get_texture_info (filename, nullptr,
+                                                       rop.shadingcontext()->texture_thread_info(),
+                                                       rop.shadingcontext(),
+                                                       0 /* TODO: subimage? */,
+                                                       dataname, t, dl, mydata, &errormessage);
+
+        if (result) {
+            int oldresultarg = rop.inst()->args()[op.firstarg()+0];
+            int datalenarg = rop.inst()->args()[op.firstarg()+3];
+            int dataarg = rop.inst()->args()[op.firstarg()+4];
+
+
+            // Make data the first argument
+            rop.inst()->args()[op.firstarg()+0] = dataarg;
+            // Now turn it into an assignment
+            int cind = rop.add_constant (Data.typespec(), mydata);
+            rop.turn_into_assign (op, cind, "const fold gettextureinfo");
+
+            // Now insert a new instruction that assigns 1 to the
+            // original return result of gettextureinfo, and a new instruction
+            // assigning the datalen value.
+            int one = 1;
+            const int args_to_add[] = {
+                oldresultarg,
+                rop.add_constant (TypeDesc::TypeInt, &one)
+            };
+
+            rop.insert_code (opnum, u_assign, args_to_add,
+                             RuntimeOptimizer::RecomputeRWRanges,
+                             RuntimeOptimizer::GroupWithNext);
+
+            rop.insert_code (opnum, u_assign, { datalenarg, rop.add_constant(dl)},
+                             RuntimeOptimizer::RecomputeRWRanges,
+                             RuntimeOptimizer::GroupWithNext);
+
+            return 1;
+        }
+
+    }else if (Filename.is_constant() && Dataname.is_constant()) {
         ustring filename = Filename.get_string();
         ustring dataname = Dataname.get_string();
         TypeDesc t = Data.typespec().simpletype();
