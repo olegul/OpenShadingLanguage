@@ -415,21 +415,28 @@ osl_get_textureinfo_index (void *sg_, const char *name, void *handle,
 {
     // recreate TypeDesc
     TypeDesc typedesc;
-    typedesc.basetype  = type;
-    typedesc.arraylen  = arraylen;
-    typedesc.aggregate = aggregate;
 
     ShaderGlobals *sg   = (ShaderGlobals *)sg_;
 
-    int &dl = *(int *)datalen;
+    int result = sg->renderer->get_texture_info_type (USTR(name),
+                                       (RendererServices::TextureHandle *)handle,
+                                       sg->context->texture_thread_info(),
+                                       sg->context,
+                                       0 /*FIXME-ptex*/,
+                                       USTR(dataname), typedesc,
+                                       errormessage);
 
-    return sg->renderer->get_texture_info (USTR(name),
-                                           (RendererServices::TextureHandle *)handle,
-                                           sg->context->texture_thread_info(),
-                                           sg->context,
-                                           0 /*FIXME-ptex*/,
-                                           USTR(dataname), typedesc, dl, data,
-                                           errormessage);
+    bool valid_destination = (arraylen >= typedesc.arraylen && type == typedesc.basetype && aggregate == typedesc.aggregate);
+
+    if (result && valid_destination)
+        return sg->renderer->get_texture_info (USTR(name),
+                                       (RendererServices::TextureHandle *)handle,
+                                       sg->context->texture_thread_info(),
+                                       sg->context,
+                                       0 /*FIXME-ptex*/,
+                                       USTR(dataname), typedesc, data,
+                                       errormessage);
+    return false;
 }
 
 

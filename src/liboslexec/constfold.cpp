@@ -2328,10 +2328,13 @@ DECLFOLDER(constfold_gettextureinfo)
     // the filename is constant and is known to not be UDIM, we can fall back
     // to the other case.
     bool use_coords = (op.nargs() == 6);
-    bool use_datalen  = (op.nargs() == 5);
 
     if (use_coords)
         return 0;
+
+    // This is the case where we're querying an arbitrary array and return
+    // its data and array-length
+    bool use_datalen  = (op.nargs() == 5);
 
     OSL_MAYBE_UNUSED Symbol& Result(*rop.inst()->argsymbol(op.firstarg() + 0));
     Symbol &Filename (*rop.inst()->argsymbol(op.firstarg()+1));
@@ -2348,22 +2351,34 @@ DECLFOLDER(constfold_gettextureinfo)
         ustring dataname = Dataname.get_string();
         TypeDesc t = Data.typespec().simpletype();
         void *mydata = OIIO_ALLOCA(char, t.size());
-        void *mydatalen = OIIO_ALLOCA(char, Datalen->typespec().simpletype().size());
 
         ustring errormessage;
 
-        int &dl = *(int *)mydatalen;
-        int result = rop.renderer()->get_texture_info (filename, nullptr,
+        TypeDesc typedesc;
+        int result = rop.renderer()->get_texture_info_type (filename, nullptr,
                                                        rop.shadingcontext()->texture_thread_info(),
                                                        rop.shadingcontext(),
                                                        0 /* TODO: subimage? */,
-                                                       dataname, t, dl, mydata, &errormessage);
+                                                       dataname, typedesc, &errormessage);
 
-        if (result) {
+        //std::cout << "OSL Array len: " << t.arraylen << "\n";
+        //std::cout << "Target array len: " << typedesc.arraylen << "\n";
+
+        bool valid_destination = (t.arraylen >= typedesc.arraylen && t.basetype == typedesc.basetype && t.aggregate == typedesc.aggregate);
+
+        if (valid_destination)
+            std::cout<< "valid destination\n";
+
+        if (result && valid_destination){
+            result *= rop.renderer()->get_texture_info (filename, nullptr,
+                                                       rop.shadingcontext()->texture_thread_info(),
+                                                       rop.shadingcontext(),
+                                                       0 /* TODO: subimage? */,
+                                                       dataname, typedesc, mydata, &errormessage);
+
             int oldresultarg = rop.inst()->args()[op.firstarg()+0];
             int datalenarg = rop.inst()->args()[op.firstarg()+3];
             int dataarg = rop.inst()->args()[op.firstarg()+4];
-
 
             // Make data the first argument
             rop.inst()->args()[op.firstarg()+0] = dataarg;
@@ -2372,19 +2387,14 @@ DECLFOLDER(constfold_gettextureinfo)
             rop.turn_into_assign (op, cind, "const fold gettextureinfo");
 
             // Now insert a new instruction that assigns 1 to the
-            // original return result of gettextureinfo, and a new instruction
-            // assigning the datalen value.
+            // original return result of gettextureinfo.
             int one = 1;
-            const int args_to_add[] = {
-                oldresultarg,
-                rop.add_constant (TypeDesc::TypeInt, &one)
-            };
-
-            rop.insert_code (opnum, u_assign, args_to_add,
+            rop.insert_code (opnum, u_assign, {oldresultarg, rop.add_constant (TypeDesc::TypeInt, &one)},
                              RuntimeOptimizer::RecomputeRWRanges,
                              RuntimeOptimizer::GroupWithNext);
 
-            rop.insert_code (opnum, u_assign, { datalenarg, rop.add_constant(dl)},
+            // We also insert an instruction that assigns the datalen value
+            rop.insert_code (opnum, u_assign, {datalenarg, rop.add_constant(typedesc.arraylen)},
                              RuntimeOptimizer::RecomputeRWRanges,
                              RuntimeOptimizer::GroupWithNext);
 

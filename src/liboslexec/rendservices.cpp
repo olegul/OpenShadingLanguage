@@ -250,22 +250,20 @@ RendererServices::get_texture_info (ustring filename,
 
 
 bool
-RendererServices::get_texture_info (ustring filename,
+RendererServices::get_texture_info_type (ustring filename,
                                     TextureHandle *texture_handle,
                                     TexturePerthread *texture_thread_info,
                                     ShadingContext *shading_context,
                                     int subimage, ustring dataname,
-                                    TypeDesc datatype,
-                                    int& datalen,
-                                    void *data, ustring *errormessage)
+                                    TypeDesc &datatype, ustring *errormessage)
 {
     //std::cout << "RendererServices::get_texture_info (index)\n";
     if (! texture_thread_info)
         texture_thread_info = shading_context->texture_thread_info();
     if (! texture_handle)
         texture_handle = texturesys()->get_texture_handle (filename, texture_thread_info);
-    bool status = texturesys()->get_texture_info (texture_handle, texture_thread_info, subimage,
-                                                  dataname, datatype, datalen, data);
+    bool status = texturesys()->get_texture_info_type (texture_handle, texture_thread_info, subimage,
+                                                  dataname, datatype);
     if (!status) {
         std::string err = texturesys()->geterror();
         if (err.size()) {
