@@ -4391,8 +4391,8 @@ errors. The error message stored will be \qkw{} if no error occurred.
 \bigspc\bigspc output \emph{type} destination) \\
 int {\ce gettextureinfo} (string texturename, float s, float t, string paramname,\\
 \bigspc\bigspc output \emph{type} destination) \\
-int {\ce gettextureinfo} (string texturename, string paramname,\\
-\bigspc\bigspc output int paramlen) \\
+int {\ce gettextureinfo} (string texturename, string arrayname,\\
+\bigspc\bigspc output int arraylen, \\
 \bigspc\bigspc output \emph{type[]} destination)
 }
 \indexapi{gettextureinfo()}
@@ -4413,6 +4413,11 @@ When UDIM textures are queried without coordinates supplied, it will succeed
 and return the texture info only if that parameter is found and has the same
 value in all files comprising the UDIM set. (Note: the version with
 coordinates was added in OSL 1.12.)
+
+The array version of {\cf gettextureinfo} will output the size, \emph{arraylen}, and data
+.\emph{destination}, of a parameter if the type of \emph{destination} matches
+the type of the parameter and the array length of \emph{destination} is large enough to hold
+the data. This version was added in OSL 1.12.3.
 
 Valid parameters recognized are listed below:
 
@@ -4446,12 +4451,6 @@ one of: \qkws{Plain Texture}, \qkws{Shadow}, \qkws{Environment},
 \qkw{subimages} & {\cf int} & Returns the number of subimages in the
 texture file. \\[0.75ex]
 
-\qkw{textureformat} & {\cf string} & Returns the texture format, one of:
-\qkws{Plain Texture}, \qkws{Shadow}, \qkws{CubeFace Shadow}, \qkws{Volume
-  Shadow}, \qkws{CubeFace Environment}, \qkws{LatLong Environment},
-\qkws{Volume Texture}. Note that this differs from \qkw{type} in that it
-specifically distinguishes between the different types of shadows and
-environment maps.  \\[0.75ex]
 
 \noindent ...continued...
 \end{tabular}
@@ -4459,6 +4458,15 @@ environment maps.  \\[0.75ex]
 \begin{tabular}{p{1.1in} p{0.5in} p{3.4in}}
 {\bf Name} & {\bf Type} & {\bf Description} \\
 \hline
+
+\qkw{textureformat} & {\cf string} & Returns the texture format, one of:
+
+\qkws{Plain Texture}, \qkws{Shadow}, \qkws{CubeFace Shadow}, \qkws{Volume
+  Shadow}, \qkws{CubeFace Environment}, \qkws{LatLong Environment},
+
+\qkws{Volume Texture}. Note that this differs from \qkw{type} in that it
+specifically distinguishes between the different types of shadows and
+environment maps.  \\[0.75ex]
 
 \qkw{datawindow} & {\cf int[]} &
 Returns the pixel data window of the image.  The argument is an {\cf int}
